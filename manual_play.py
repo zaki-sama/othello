@@ -6,7 +6,6 @@ class Player(Enum):
     White = "W "
     Empty = "_ "
 
-
 class Othello:
     # initializes an empty board of othello with:
     # - a default board size of 8x8
@@ -16,7 +15,6 @@ class Othello:
         self.board_size = board_size
         self.current_player = Player.Black
         self.board = []
-        self.last_flipped = []  # location of pieces last flipped by current player
         for row in range(board_size):
             row = []
             for col in range(board_size):
@@ -29,8 +27,6 @@ class Othello:
         self.board[second_line][first_line] = Player.Black
         self.board[second_line][second_line] = Player.White
         self.board[first_line][second_line] = Player.Black
-
-        print("next move: " + str(self.current_player))
 
     # def __str__(self):
     #     result = ''
@@ -49,18 +45,38 @@ class Othello:
             result += '\n'
         return result
 
+    """ GAME PLAY """
+    def play_game(self):
+        while not self.game_over():
+            print(self)
+            # Print whose turn it is
+            if self.current_player == Player.Black:
+                print("Black's Turn")
+            else:
+                print("White's Turn")
+
+            valid_move = False
+            while not valid_move:
+                # Prompt user for input
+                row = input("Enter a row to move to:")
+                col = input("Enter a row to move to:")
+
+                if row.isdigit() and col.isdigit():
+                    if self.is_valid_move(int(row), int(col)):
+                        print("Moving to: (" + str(row) + ", " + str(col) + ")")
+                        valid_move = True
+                    else:
+                        print("Invalid move, try again")
+                else:
+                    print("Invalid entry, try again")
+
+            self.place_disc(int(row), int(col))
+            self.switch_player()
+        self.get_winner()
+
     """ GAME LOGIC CODE """
-    # undoes the last move made by a player
-    def remove_disc(self, to_row, to_col):
-        self.board[to_row][to_col] = Player.Empty
-        for flipped_disc in self.last_flipped:
-            r, c = flipped_disc[0], flipped_disc[1]
-            self.board[r][c] = self.current_player
-
-
     # places a disc at to_row, to_col for current player
     def place_disc(self, to_row, to_col):
-        self.last_move = []
         if self.board[to_row][to_col] == Player.Empty:
             for neighbor in self.get_neighbors_of(to_row, to_col):
                 r, c = neighbor[0], neighbor[1]
@@ -76,7 +92,6 @@ class Othello:
                         c -= c_dir
                         while self.is_opponent(r, c):
                             self.board[r][c] = self.current_player
-                            self.last_flipped.append((r, c))
                             r -= r_dir
                             c -= c_dir
                         self.board[r][c] = self.current_player
@@ -84,7 +99,6 @@ class Othello:
                     else:
                         break
 
-            self.switch_player()
         else:
             print("invalid move")
 
@@ -163,8 +177,11 @@ class Othello:
                0 <= c < self.board_size
 
     def game_over(self):
-        moves_left = self.get_all_valid_moves()
-        return len(moves_left) == 0
+        player_moves_left = self.get_all_valid_moves()
+        self.switch_player()
+        opposite_moves_left = self.get_all_valid_moves()
+        self.switch_player()
+        return len(player_moves_left) == 0 and len(opposite_moves_left) == 0
 
     def get_winner(self):
         black_count = 0
@@ -176,7 +193,14 @@ class Othello:
                         black_count += 1
                     elif cell == Player.White:
                         white_count += 1
-        print("black: " + str(black_count) + ", white: " + str(white_count))
+        print("Black: " + str(black_count) + ", White: " + str(white_count))
+        if black_count > white_count:
+            print("Black wins!")
+            return Player.Black
+        elif white_count > black_count:
+            print("White wins!")
+            return Player.White
+        return Player.Empty
 
     """ EVALUATION/HEURISTIC CODE """
     def corner_heuristics(self):
@@ -203,83 +227,3 @@ class Othello:
     @staticmethod
     def manhattan_distance(r, c, new_r, new_c):
         return abs(r - new_r) + abs(c - new_c)
-
-    """MINIMAX CODE"""
-    def play_game(self):
-        while True:
-            moves = self.get_all_valid_moves()
-            if len(moves) == 0:
-                print("No more moves available")
-                break
-
-            if self.current_player == Player.Black:
-                best_move = self.maximize()
-            else:
-                best_move = self.minimize()
-
-            print(f"Player {self.current_player} played {best_move}")
-            self.place_disc(best_move[0], best_move[1])
-
-        print(self)
-
-    def maximize(self):
-        _, best_move = self.minimax(3, True)
-        return best_move
-
-    def minimize(self):
-        _, best_move = self.minimax(3, False)
-        return best_move
-
-    def minimax(self, depth, is_maximizing):
-        if depth == 0:
-            print("depth reached: " + str(self.get_board_score()))
-            return self.get_board_score(), None
-
-        valid_moves = self.get_all_valid_moves()
-        if len(valid_moves) == 0:
-            if self.current_player == Player.Black:
-                self.current_player = Player.White
-            else:
-                self.current_player = Player.Black
-            return self.minimax(depth - 1, not is_maximizing)
-
-        if is_maximizing:
-            best_score = float('-inf')
-            best_move = None
-            print(valid_moves)
-            for move in valid_moves:
-                self.place_disc(move[0], move[1])
-                score, _ = self.minimax(depth - 1, False)
-                self.remove_disc(move[0], move[1])
-                print("score: " + str(score) + ", best_score: " + str(best_score))
-                if score > best_score:
-                    best_score = score
-                    best_move = move
-            return best_score, best_move
-        else:
-            best_score = float('inf')
-            best_move = None
-            for move in valid_moves:
-                self.place_disc(move[0], move[1])
-                score, _ = self.minimax(depth - 1, True)
-                self.remove_disc(move[0], move[1])
-                if score < best_score:
-                    best_score = score
-                    best_move = move
-            return best_score, best_move
-
-    def get_board_score(self):
-        black_score = 0
-        white_score = 0
-        for row in range(self.board_size):
-            for col in range(self.board_size):
-                if self.board[row][col] == Player.Black:
-                    black_score += 1
-                elif self.board[row][col] == Player.White:
-                    white_score += 1
-        return 0
-        # if self.current_player == Player.Black:
-        #     return black_score
-        # if self.current_player == Player.White:
-        #     return white_score
-

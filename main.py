@@ -1,18 +1,16 @@
 # Press the green button in the gutter to run the script.
-from game import Othello, Player
-from minimax import MinimaxAgent
+from manual_play import Othello, Player
 
 if __name__ == '__main__':
     game = Othello(board_size=6)
-    minimax_agent = MinimaxAgent(Player.Black)
-    # game.play_game(minimax_agent)
-    result = game.__str__()
-    print(result)
     game.play_game()
+    #minimax_agent = MinimaxAgent(Player.Black)
+    # game.play_game(minimax_agent)
+    # result = game.__str__()
+    # print(result)
+    # game.play_game()
     # game.get_winner()
     # game.place_disc(1, 2)
-    # print(game.last_flipped)
-    # game.remove_disc(1, 2)
     # game.place_disc(1, 1)
     # game.place_disc(4, 3)
     # game.place_disc(4, 4)
