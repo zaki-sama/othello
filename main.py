@@ -1,8 +1,10 @@
 # Press the green button in the gutter to run the script.
-from manual_play import Othello, Player
+from minimax_agent import MinimaxAgent
+from no_agent import NoAgent
 
 if __name__ == '__main__':
-    game = Othello(board_size=6)
+    # game = NoAgent(board_size=6)
+    game = MinimaxAgent(board_size=6)
     game.play_game()
     #minimax_agent = MinimaxAgent(Player.Black)
     # game.play_game(minimax_agent)
