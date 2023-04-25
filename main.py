@@ -1,10 +1,11 @@
 # Press the green button in the gutter to run the script.
+from alpha_beta_agent import AlphaBetaAgent
 from minimax_agent import MinimaxAgent
 from no_agent import NoAgent
 
 if __name__ == '__main__':
     # game = NoAgent(board_size=6)
-    game = MinimaxAgent(board_size=6)
+    game = AlphaBetaAgent(board_size=8, max_depth=3)
     game.play_game()
     #minimax_agent = MinimaxAgent(Player.Black)
     # game.play_game(minimax_agent)

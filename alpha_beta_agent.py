@@ -1,9 +1,10 @@
 import copy
+import random as rand
 
 from othello import Othello, Player
 
 
-class MinimaxAgent:
+class AlphaBetaAgent:
     def __init__(self, board_size, max_depth: int = 5):
         self.max_depth = max_depth
         self.state = Othello(board_size)
@@ -13,66 +14,51 @@ class MinimaxAgent:
         board = self.state.init_board()
 
         print(self.state.to_string(board))
-        print(self.value(board, player, 0))
-        # while not self.state.game_over(board):
-        #     print(self.state.to_string(board))
-        #
-        #     if self.state.no_moves_left(board, player):
-        #         player = self.state.get_opponent(player)
-        #     # Print whose turn it is
-        #     if player == Player.Black:
-        #         print("Black's Turn")
-        #     else:
-        #         print("White's Turn")
-        #
-        #     move = self.value(board, player, 0)
-        #     row, col = move[0], move[1]
-        #     board = self.state.place_disc(board, player, int(row), int(col))
-        #     player = self.state.switch_player(player)
-        # self.state.get_winner(board)
+        print(self.value(board, player, 0, float("-inf"), float("inf")))
 
-    def value(self, board, player, depth):
-        # if player == game_state.getNumAgents():
-        #     # reset agent to pacman amd increase depth
-        #     depth += 1
-        #     agent = 0
-
-        # print(depth)
-        # print(self.state.game_over(board))
-        # print(str(depth) + " " + str(depth >= self.max_depth))
+    def value(self, board, player, depth, alpha, beta):
         print(str(player) + " " + str(depth))
-        print(self.corner_heuristic(board))
+        print(self.random_num())
         print(self.state.to_string(board))
 
         # terminal states
         if self.state.game_over(board) or depth >= self.max_depth:
-            return self.corner_heuristic(board)
+            # return self.corner_heuristic(board)
+            return self.random_num()
 
         if player == Player.Black:
             # actions are only taken/returned by max agent
-            return self.max_value(board, depth)
+            return self.max_value(board, depth, alpha, beta)
 
-        return self.min_value(board, depth)
+        return self.min_value(board, depth, alpha, beta)
 
-    def max_value(self, board, depth):
+    def max_value(self, board, depth, alpha, beta):
         v = float("-inf")
         possible_moves = self.state.get_all_valid_moves(board, Player.Black)
 
         best_action = None
         for a in possible_moves:
             next_state = self.state.place_disc(self.copy_board(board), Player.Black, a[0], a[1])
-            potential_val = self.value(next_state, Player.White, depth + 1)
+            potential_val = self.value(next_state, Player.White, depth + 1, alpha, beta)
             if potential_val > v:
                 v = potential_val
                 best_action = a
-        if best_action == None:
+            if v > beta:
+                print("max: v > beta, " + str(v) +" > " + str(beta))
+                if depth == 0:
+                    return best_action
+                else:
+                    return v
+            alpha = max(alpha, v)
+
+        if best_action is None:
             print("None")
         if depth == 0:
             return best_action
         else:
             return v
 
-    def min_value(self, board, depth):
+    def min_value(self, board, depth, alpha, beta):
         v = float("inf")
         possible_moves = self.state.get_all_valid_moves(board, Player.White)
 
@@ -80,10 +66,18 @@ class MinimaxAgent:
         best_action = None
         for a in possible_moves:
             next_state = self.state.place_disc(self.copy_board(board), Player.White, a[0], a[1])
-            potential_val = self.value(next_state, Player.Black, depth + 1)
+            potential_val = self.value(next_state, Player.Black, depth + 1, alpha, beta)
             if potential_val < v:
                 v = potential_val
                 best_action = a
+            if v < alpha:
+                print("min: v < alpha: " + str(alpha))
+                if depth == 0:
+                    return best_action
+                else:
+                    return v
+            beta = min(beta, v)
+
         if best_action == None:
             print("None")
         if depth == 0:
@@ -103,6 +97,9 @@ class MinimaxAgent:
                     white_count += 1
         # print("count: " + str(black_count - white_count))
         return black_count - white_count
+
+    def random_num(self):
+        return rand.randint(1, 10)
 
     # evaluation function 2: minimizing black's distance to corner
     def corner_heuristic(self, board):

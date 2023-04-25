@@ -11,14 +11,6 @@ class Othello:
     def __init__(self, board_size=8):
         self.board_size = board_size
 
-    # def __str__(self):
-    #     result = ''
-    #     for row in self.board:
-    #         for cell in row:
-    #             result += cell.value
-    #         result += '\n'
-    #     return result
-
     def to_string(self, board):
         result = '  ' + ' '.join(str(i) for i in range(self.board_size)) + '\n'
         for i, row in enumerate(board):
@@ -84,6 +76,7 @@ class Othello:
         if black_over and white_over:
             print("Game over!")
             return True
+        return False
 
     def no_moves_left(self, board, player):
         moves_left = self.get_all_valid_moves(board, player)
@@ -145,16 +138,22 @@ class Othello:
 
         return board
 
+    def count_pieces(self, board):
+        black_count = 0
+        white_count = 0
+        for row in board:
+            for cell in row:
+                if cell == Player.Black:
+                    black_count += 1
+                elif cell == Player.White:
+                    white_count += 1
+        return black_count, white_count
+
     def get_winner(self, board):
         black_count = 0
         white_count = 0
         if self.game_over(board):
-            for row in board:
-                for cell in row:
-                    if cell == Player.Black:
-                        black_count += 1
-                    elif cell == Player.White:
-                        white_count += 1
+            black_count, white_count = self.count_pieces(board)
         print("Black: " + str(black_count) + ", White: " + str(white_count))
         if black_count > white_count:
             print("Black wins!")
