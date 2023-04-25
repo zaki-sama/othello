@@ -22,12 +22,12 @@ class OthelloGUI:
         for r in range(self.game.board_size):
             board_row = []
             for c in range(self.game.board_size):
-                disc = tk.PhotoImage(file="images/green.png")
+                disc = tk.PhotoImage(file="images/green.gif")
                 if self.board[r][c] == Player.Black:
-                    disc = tk.PhotoImage(file="images/black.png")
+                    disc = tk.PhotoImage(file="images/black.gif")
                 elif self.board[r][c] == Player.White:
-                    disc = tk.PhotoImage(file="images/white.png")
-                slot = tk.Button(self.gui, image=disc, height=4, width=4)
+                    disc = tk.PhotoImage(file="images/white.gif")
+                slot = tk.Button(self.gui, image=disc, highlightbackground='#228C22', height=60, width=60, command=lambda row=r, col=c: self.button_clicked(row, col))
                 slot.pack()
 
                 # slot = tk.Button(self.gui, height=4, width=4, highlightbackground='#228C22',
@@ -36,7 +36,7 @@ class OthelloGUI:
                 board_row.append(slot)
             self.board_gui.append(board_row)
 
-        self.update_board()
+        # self.update_board()
 
     def update_board(self):
         for i in range(self.game.board_size):
