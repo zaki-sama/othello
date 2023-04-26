@@ -1,4 +1,8 @@
 # Othello AI
+
+### Terminal Input
+
+### Files
 agents
 - alpha_beta_agent.py is the alpha-beta agent, which can be used with any heurisitc
 - minimax_agent.py is the minimax agent, which uses the corner heuristic
