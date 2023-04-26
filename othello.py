@@ -7,10 +7,24 @@ class Player(Enum):
     Empty = "_ "
 
 
+def difference_heuristic(board):
+    black_count = 0
+    white_count = 0
+    for row in board:
+        for cell in row:
+            if cell == Player.Black:
+                black_count += 1
+            elif cell == Player.White:
+                white_count += 1
+    # print("count: " + str(black_count - white_count))
+    return black_count - white_count
+
+
 class Othello:
     def __init__(self, board_size=8):
         self.board_size = board_size
 
+    # DISPLAY BOARD  ---------------------------------------------------------------------
     def to_string(self, board):
         result = '  ' + ' '.join(str(i) for i in range(self.board_size)) + '\n'
         for i, row in enumerate(board):
@@ -20,6 +34,7 @@ class Othello:
             result += '\n'
         return result
 
+    # GAME LOGIC ---------------------------------------------------------------------
     def is_valid_move(self, board, player, to_row, to_col):
         if board[to_row][to_col] == Player.Empty:
             # look at each neighbor around given row and col
@@ -74,7 +89,7 @@ class Othello:
         black_over = self.no_moves_left(board, Player.Black)
         white_over = self.no_moves_left(board, Player.White)
         if black_over and white_over:
-            print("Game over!")
+            # print("Game over!")
             return True
         return False
 
