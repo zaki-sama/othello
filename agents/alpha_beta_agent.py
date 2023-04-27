@@ -48,8 +48,6 @@ class AlphaBetaAgent:
                     return v
             alpha = max(alpha, v)
 
-        # if best_action == None:
-        #     print("None")
         if depth == 0:
             return best_action
         else:
@@ -74,8 +72,6 @@ class AlphaBetaAgent:
                     return v
             beta = min(beta, v)
 
-        # if best_action == None:
-        #     print("None")
         if depth == 0:
             return best_action
         else:

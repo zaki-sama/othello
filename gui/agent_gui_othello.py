@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from agents.minimax_agent import MinimaxAgent
+from agents.alpha_beta_agent import AlphaBetaAgent
 from othello import Othello, Player
 
 
@@ -9,7 +9,7 @@ class SinglePlayerOthelloGUI:
         self.gui = tk.Tk()
         self.gui.title("Othello")
 
-        self.agent = MinimaxAgent(player=Player.White, max_depth=3)
+        self.agent = AlphaBetaAgent(player=Player.White, max_depth=4, heuristic="difference")
         self.game = Othello()
         self.board = self.game.init_board()
         self.current_player = Player.Black
@@ -61,6 +61,9 @@ class SinglePlayerOthelloGUI:
                 self.end_game()
             else:
                 self.current_player = self.game.switch_player(self.current_player)
+        else:
+            tk.messagebox.showinfo("Warning", "No Possible Moves")
+            self.current_player = self.game.switch_player(self.current_player)
 
         if not self.game.game_over(self.board):
             if self.current_player == Player.White:

@@ -5,17 +5,18 @@ from agents.minimax_agent import MinimaxAgent
 from othello import Othello, Player
 
 
+### This code was used for testing the alpha beta agent
 class TestingClass:
 
     def __init__(self):
-        self.alpha_beta = AlphaBetaAgent(player=Player.Black, max_depth=4, heuristic="difference")
-        # self.minimax = MinimaxAgent()
+        self.alpha_beta = AlphaBetaAgent(player=Player.Black, max_depth=4, heuristic="mobility")
         self.othello = Othello()
 
     def run_ab_agent(self):
         board = self.othello.init_board()
         current_player = self.alpha_beta.maximizing_player
         opponent = self.alpha_beta.minimizing_player
+        move_count = 0
         while not self.othello.game_over(board):
             if current_player == opponent:
                 valid_moves = self.othello.get_all_valid_moves(board, opponent)
@@ -25,19 +26,21 @@ class TestingClass:
                 current_player = self.othello.switch_player(current_player)
             else:
                 if self.alpha_beta.value(board, current_player, 0, float("-inf"), float("inf")) is not None:
+                    move_count += 1
                     row, col = self.alpha_beta.value(board, current_player, 0, float("-inf"), float("inf"))
                     board = self.othello.place_disc(board, current_player, row, col)
                 current_player = self.othello.switch_player(current_player)
         winner = self.othello.get_winner(board)
         # print("states: " + str(self.alpha_beta.expanded_states))
         print(winner)
+        # print("moves: " + move_count)
         return winner
 
 
 if __name__ == '__main__':
     test = TestingClass()
 
-    runs = 100
+    runs = 77
     wins = 0
     for x in range(runs):
         print(str(x))
