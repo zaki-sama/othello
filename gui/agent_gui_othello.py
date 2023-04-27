@@ -61,23 +61,20 @@ class SinglePlayerOthelloGUI:
                 self.end_game()
             else:
                 self.current_player = self.game.switch_player(self.current_player)
-        else:
-            tk.messagebox.showinfo("Warning", "No Possible Moves")
-            self.current_player = self.game.switch_player(self.current_player)
 
         if not self.game.game_over(self.board):
             if self.current_player == Player.White:
                 self.update_turn_label()
                 self.gui.after(500, self.pick_max_move)
             if len(self.game.get_all_valid_moves(self.board, self.current_player)) == 0:
-                print("out of moves")
+                tk.messagebox.showinfo("Warning", "No Possible Moves")
                 self.current_player = self.game.switch_player(self.current_player)
                 self.gui.after(500, self.pick_max_move)
         else:
             self.end_game()
 
     def pick_max_move(self):
-        row, col = self.agent.value(self.board, Player.White, 0)
+        row, col = self.agent.value(self.board, Player.White, 0, float("-inf"), float("inf"))
         self.board = self.game.place_disc(self.board, self.current_player, row, col)
         self.update_board()
         if self.game.game_over(self.board):
