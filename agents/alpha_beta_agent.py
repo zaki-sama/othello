@@ -2,25 +2,27 @@ from othello import Othello, Player
 
 
 class AlphaBetaAgent:
-    def __init__(self, board_size=8, max_depth: int = 5, player=Player.Black):
+    def __init__(self, board_size=8, max_depth=5, player=Player.Black, heuristic=""):
         self.max_depth = max_depth
         self.state = Othello(board_size)
         self.maximizing_player = player
         self.minimizing_player = self.state.get_opponent(player)
-
-    def play_game(self):
-        player = self.maximizing_player
-        board = self.state.init_board()
-
-        print(self.state.to_string(board))
-        print(self.value(board, player, 0, float("-inf"), float("inf")))
+        self.expanded_states = 0
+        self.heuristic = heuristic
 
     def value(self, board, player, depth, alpha, beta):
+        self.expanded_states += 1
 
         # terminal states
         if self.state.game_over(board) or depth >= self.max_depth:
-            # return self.corner_heuristic(board)
-            return self.count_heuristic(board)
+            if self.heuristic == "pieces":
+                return self.count_heuristic(board)
+            elif self.heuristic == "difference":
+                return self.difference_heuristic(board)
+            elif self.heuristic == "mobility":
+                return self.mobility_heuristic(board)
+            else:
+                return self.corner_heuristic(board)
 
         if player == self.maximizing_player:
             # actions are only taken/returned by max agent

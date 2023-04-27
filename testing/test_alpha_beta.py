@@ -8,7 +8,7 @@ from othello import Othello, Player
 class TestingClass:
 
     def __init__(self):
-        self.alpha_beta = AlphaBetaAgent(player=Player.Black, max_depth=4)
+        self.alpha_beta = AlphaBetaAgent(player=Player.Black, max_depth=4, heuristic="difference")
         # self.minimax = MinimaxAgent()
         self.othello = Othello()
 
@@ -29,6 +29,7 @@ class TestingClass:
                     board = self.othello.place_disc(board, current_player, row, col)
                 current_player = self.othello.switch_player(current_player)
         winner = self.othello.get_winner(board)
+        # print("states: " + str(self.alpha_beta.expanded_states))
         print(winner)
         return winner
 
@@ -36,7 +37,7 @@ class TestingClass:
 if __name__ == '__main__':
     test = TestingClass()
 
-    runs = 40
+    runs = 100
     wins = 0
     for x in range(runs):
         print(str(x))
