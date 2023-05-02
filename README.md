@@ -18,3 +18,5 @@ testing
 
 - main.py is responsible for command line inputs and deciding which agent to run with which arguments
 - othello.py houses all the game logic, so methods do not need to be duplicated throughout 
+
+<img width="500" alt="Screen Shot 2023-05-02 at 1 08 18 PM" src="https://user-images.githubusercontent.com/99611638/235774493-69e1734a-7f4d-4082-abbc-e485bd75513e.png">
